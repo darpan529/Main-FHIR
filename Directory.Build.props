@@ -1,0 +1,69 @@
+<Project>
+
+  <!-- Nuget related properties.-->
+  <PropertyGroup>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Product>Microsoft FHIR Server for Azure</Product>
+    <RepositoryUrl>https://github.com/microsoft/fhir-server/</RepositoryUrl>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <!-- allow pre-release dependencies -->
+    <NoWarn>$(NoWarn);NU5104</NoWarn>
+    <DebugType>Portable</DebugType>
+    <LangVersion>9.0</LangVersion>
+    <HighEntropyVA>true</HighEntropyVA>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Authors>Microsoft Health Team</Authors>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <Company>Microsoft Corporation</Company>
+    <Copyright>Copyright © Microsoft Corporation. All rights reserved.</Copyright>
+    <Deterministic>true</Deterministic>
+    <!--This will target the latest patch release of the runtime released with the current SDK.  -->
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+  </PropertyGroup>
+  <!-- Shared dependencies versions.-->
+  <PropertyGroup>
+    <RuntimePackageVersion>5.0.0</RuntimePackageVersion>
+    <AspNetPackageVersion>5.0.11</AspNetPackageVersion>
+    <HealthcareSharedPackageVersion>3.2.15</HealthcareSharedPackageVersion>
+    <Hl7FhirVersion>3.5.0</Hl7FhirVersion>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="$(MSBuildProjectName.Contains('Test'))">
+      <PropertyGroup>
+        <IsPackable>false</IsPackable>
+        <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\CustomAnalysisRules.Test.ruleset</CodeAnalysisRuleSet>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <IsPackable>true</IsPackable>
+        <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)\CustomAnalysisRules.ruleset</CodeAnalysisRuleSet>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.321" PrivateAssets="All" />
+  </ItemGroup>
+
+  <Choose>
+    <When Condition="$(MSBuildProjectName)!='SmartLauncher' and $(MSBuildProjectName)!='FhirAnalyzer'  AND !$(MSBuildProjectName.Contains('Test'))">
+      <ItemGroup>
+        <ProjectReference Include="..\..\tools\FhirAnalyzer\FhirAnalyzer.csproj">
+          <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+          <OutputItemType>Analyzer</OutputItemType>
+        </ProjectReference>
+      </ItemGroup>
+    </When>
+  </Choose>
+</Project>
